@@ -4,6 +4,8 @@ options:
   deploymentTarget:
     iOS: "16.0"
   xcodeVersion: "15.0"
+  minimumXcodeGenVersion: "2.30.0"
+  groupSortPosition: top
 
 settings:
   base:
