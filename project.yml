@@ -1,0 +1,40 @@
+name: SportzX
+options:
+  bundleIdPrefix: com.sportzx
+  deploymentTarget:
+    iOS: "16.0"
+  xcodeVersion: "15.0"
+
+settings:
+  base:
+    SWIFT_VERSION: "5.9"
+    TARGETED_DEVICE_FAMILY: "1"
+    INFOPLIST_FILE: "SportzX/Info.plist"
+    CODE_SIGN_IDENTITY: ""
+    CODE_SIGNING_REQUIRED: NO
+    CODE_SIGNING_ALLOWED: NO
+
+targets:
+  SportzX:
+    type: application
+    platform: iOS
+    sources:
+      - path: SportzX
+        excludes:
+          - "Info.plist"
+    info:
+      path: SportzX/Info.plist
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.sportzx.ios
+        INFOPLIST_FILE: SportzX/Info.plist
+        TARGETED_DEVICE_FAMILY: "1"
+      configs:
+        Release:
+          PRODUCT_BUNDLE_IDENTIFIER: com.sportzx.ios
+    scheme:
+      buildAction:
+        targets:
+          - SportzX
+      archiveAction:
+        configuration: Release
