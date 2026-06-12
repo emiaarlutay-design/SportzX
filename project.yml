@@ -4,12 +4,11 @@ options:
   deploymentTarget:
     iOS: "16.0"
   xcodeVersion: "15.0"
-  minimumXcodeGenVersion: "2.30.0"
   groupSortPosition: top
 
 settings:
   base:
-    SWIFT_VERSION: "5.9"
+    SWIFT_VERSION: "5.0"
     TARGETED_DEVICE_FAMILY: "1"
     INFOPLIST_FILE: "SportzX/Info.plist"
     CODE_SIGN_IDENTITY: ""
@@ -22,8 +21,6 @@ targets:
     platform: iOS
     sources:
       - path: SportzX
-        excludes:
-          - "Info.plist"
     info:
       path: SportzX/Info.plist
     settings:
@@ -40,3 +37,4 @@ targets:
           - SportzX
       archiveAction:
         configuration: Release
+
