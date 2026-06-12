@@ -1,0 +1,51 @@
+name: Build SportzX IPA
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: macos-14
+    timeout-minutes: 30
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Select Xcode
+        run: sudo xcode-select -s /Applications/Xcode_15.4.app
+
+      - name: Install XcodeGen
+        run: brew install xcodegen
+
+      - name: Generate Xcode Project
+        run: xcodegen
+
+      - name: Build IPA
+        run: |
+          xcodebuild -project SportzX.xcodeproj \
+            -scheme SportzX \
+            -sdk iphoneos \
+            -configuration Release \
+            -derivedDataPath build \
+            CODE_SIGN_IDENTITY="" \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGNING_ALLOWED=NO \
+            PRODUCT_BUNDLE_IDENTIFIER=com.sportzx.ios \
+            clean build
+
+      - name: Create IPA
+        run: |
+          mkdir -p ipa/Payload
+          cp -r build/Build/Products/Release-iphoneos/SportzX.app ipa/Payload/
+          cd ipa
+          zip -r SportzX.ipa Payload/
+          mv SportzX.ipa ../SportzX.ipa
+
+      - name: Upload IPA
+        uses: actions/upload-artifact@v4
+        with:
+          name: SportzX-ipa
+          path: SportzX.ipa
+          compression-level: 0
