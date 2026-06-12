@@ -16,20 +16,22 @@ jobs:
       - name: Select Xcode
         run: sudo xcode-select -s /Applications/Xcode_15.4.app
 
+      - name: Install XcodeGen 2.40.1
+        run: |
+          curl -sL -o /tmp/xcodegen.zip "https://github.com/yonaskolb/XcodeGen/releases/download/2.40.1/xcodegen.zip"
+          unzip -q -o /tmp/xcodegen.zip -d /tmp/xcodegen
+          echo "/tmp/xcodegen" >> $GITHUB_PATH
+
       - name: Generate Xcode Project
         run: |
-          echo "=== Cleaning old project ==="
           rm -rf SportzX.xcodeproj
-          echo "=== Running generator ==="
-          python3 .github/scripts/generate-project.py
-          echo "=== Verifying project ==="
-          head -5 SportzX.xcodeproj/project.pbxproj
-          grep "objectVersion" SportzX.xcodeproj/project.pbxproj
-          echo "=== Project files ==="
-          ls -la SportzX.xcodeproj/
+          /tmp/xcodegen/xcodegen generate --project .
+          echo "=== Generated project.pbxproj ==="
+          cat -v SportzX.xcodeproj/project.pbxproj
 
       - name: Build App
         run: |
+          set -o pipefail
           xcodebuild -project "SportzX.xcodeproj" \
             -scheme "SportzX" \
             -sdk iphoneos \
@@ -39,9 +41,10 @@ jobs:
             CODE_SIGNING_REQUIRED=NO \
             CODE_SIGNING_ALLOWED=NO \
             PRODUCT_BUNDLE_IDENTIFIER=com.sportzx.ios \
-            clean build 2>&1
+            clean build 2>&1 | head -100
 
       - name: Package IPA
+        if: success()
         run: |
           mkdir -p ipa/Payload
           cp -r "build/Build/Products/Release-iphoneos/SportzX.app" "ipa/Payload/"
@@ -50,6 +53,7 @@ jobs:
           mv SportzX.ipa "${{ github.workspace }}/SportzX.ipa"
 
       - name: Upload IPA
+        if: success()
         uses: actions/upload-artifact@v4
         with:
           name: SportzX-ipa
